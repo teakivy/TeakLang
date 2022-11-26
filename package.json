@@ -1,0 +1,15 @@
+{
+	"name": "teak-lang",
+	"version": "0.1.0",
+	"description": "TeakLang is a programming language that transpiles through JavaScript",
+	"main": "index.js",
+	"author": "TeakIvy",
+	"license": "MIT",
+	"private": false,
+	"devDependencies": {
+		"typescript": "^4.9.3"
+	},
+	"scripts": {
+		"test": "yarn tsc && node ./scripts/test.js"
+	}
+}
