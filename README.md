@@ -53,7 +53,6 @@ func main() {
 
     ```json
     {
-        ...
     	"modules": [
     		{
     			"name": "loudbook.math"
@@ -67,23 +66,21 @@ func main() {
 -   To import a module within the `/src` folder not matching the author scope, you can specify `src/X` as the path.
     ```json
     {
-        ...
-        "modules": [
-            {
-                "name": "loudbook.utils",
-                "path": "src/utils"
-            }
-        ]
+    	"modules": [
+    		{
+    			"name": "loudbook.utils",
+    			"path": "src/utils"
+    		}
+    	]
     }
     ```
     -   To importal all modules by an author, specify the name as the author scope:
         ```json
         {
-            ...
         	"modules": [
         		{
         			"name": "loudbook",
-                    "path": "src/utils"
+        			"path": "src/utils"
         		}
         	]
         }
@@ -94,7 +91,6 @@ func main() {
     -   If `allowStd` is marked `false`, you may specify it with just the name `std`.
         ```json
         {
-            ...
         	"modules": [
         		{
         			"name": "std"
