@@ -12,13 +12,21 @@ const reserved = [
     "continue",
     "true",
     "false",
+    "null",
+    "module",
+    "import",
+    "from",
+    "private",
+    "public",
+    "const",
+    "func",
 ];
 const dataTypes = ["int", "float", "string", "bool"];
 const unaryOperatorsDouble = ["++", "--"];
 const unaryOperatorsSingle = ["!"];
 const binaryOperatorsSingle = ["+", "-", "*", "/", "%", ">", "<", "^"];
 const binaryOperatorsDouble = ["==", "!=", ">=", "<=", "&&", "||"];
-const symbols = ["(", ")", "{", "}", "[", "]", ";", "="];
+const symbols = ["(", ")", "{", "}", "[", "]", ";", "=", ".", ","];
 class Lexer {
     constructor(source) {
         // this.tokens = tokens;
@@ -205,6 +213,14 @@ class Lexer {
                 }
                 case "=": {
                     type = "ASSIGNMENT_OPERATOR";
+                    break;
+                }
+                case ",": {
+                    type = "SEPARATOR";
+                    break;
+                }
+                case ".": {
+                    type = "ACCESSOR";
                     break;
                 }
             }

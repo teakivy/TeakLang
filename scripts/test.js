@@ -21,7 +21,7 @@ async function run() {
 		// 	.join(" ")
 		// 	.replace(`${process.argv[0]} ${process.argv[1]} `, "");
 
-		let source = fs.readFileSync("./scripts/tests/ex1.teak", "utf8");
+		let source = fs.readFileSync("./scripts/tests/ex1.tea", "utf8");
 
 		console.log("\n" + source + "\n");
 

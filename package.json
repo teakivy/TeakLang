@@ -1,7 +1,7 @@
 {
-	"name": "teak-lang",
+	"name": "tea",
 	"version": "0.1.0",
-	"description": "TeakLang is a programming language that transpiles through JavaScript",
+	"description": "Just your average Tea based programming language written in TypeScript, modelled after C, Python, JavaScript, & Rust.",
 	"main": "index.js",
 	"author": "TeakIvy",
 	"license": "MIT",

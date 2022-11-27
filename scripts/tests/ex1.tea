@@ -1,0 +1,19 @@
+module teak;
+
+// Import all of standard library (for print)
+import std;
+// Import just strIn & intIn functions from standard user i/o library
+import { strIn, intIn } from std.userio;
+
+func main() {
+    // Get name & age
+    string name = strIn("What is your name? ::>\n");
+    int age = intIn("How old are you? ::>\n");
+
+    // Are you 100 yet?
+    if (age < 100) {
+        print("Hello {name}, you are not 100 yet!");
+    } else {
+        print("Hello {name}, you are at least 100!")
+    }
+}

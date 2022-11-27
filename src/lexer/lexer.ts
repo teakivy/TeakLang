@@ -30,6 +30,14 @@ const reserved = [
 	"continue",
 	"true",
 	"false",
+	"null",
+	"module",
+	"import",
+	"from",
+	"private",
+	"public",
+	"const",
+	"func",
 ];
 
 const dataTypes = ["int", "float", "string", "bool"];
@@ -42,7 +50,7 @@ const binaryOperatorsSingle = ["+", "-", "*", "/", "%", ">", "<", "^"];
 
 const binaryOperatorsDouble = ["==", "!=", ">=", "<=", "&&", "||"];
 
-const symbols = ["(", ")", "{", "}", "[", "]", ";", "="];
+const symbols = ["(", ")", "{", "}", "[", "]", ";", "=", ".", ","];
 
 export class Lexer {
 	// private tokens: TokenDeclaration[];
@@ -276,6 +284,14 @@ export class Lexer {
 				}
 				case "=": {
 					type = "ASSIGNMENT_OPERATOR";
+					break;
+				}
+				case ",": {
+					type = "SEPARATOR";
+					break;
+				}
+				case ".": {
+					type = "ACCESSOR";
 					break;
 				}
 			}
