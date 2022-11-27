@@ -7,6 +7,21 @@ exports.tokens = [
         match: [" ", "\t", "\r", "\n"],
     },
     {
+        type: "KEYWORD",
+        match: [
+            "if",
+            "else",
+            "while",
+            "for",
+            "return",
+            "break",
+            "continue",
+            "true",
+            "false",
+        ],
+        value: true,
+    },
+    {
         type: "DATA_TYPE",
         match: ["int", "float", "string", "bool"],
         value: true,
@@ -17,13 +32,8 @@ exports.tokens = [
         value: true,
     },
     {
-        type: "FLOATING_POINT",
-        match: /(\d*\.\d+)/,
-        value: true,
-    },
-    {
-        type: "INTEGER",
-        match: /\d+/,
+        type: "BRACE",
+        match: ["(", ")", "{", "}", "[", "]"],
         value: true,
     },
     {
@@ -64,28 +74,18 @@ exports.tokens = [
         value: true,
     },
     {
-        type: "KEYWORD",
-        match: [
-            "if",
-            "else",
-            "while",
-            "for",
-            "return",
-            "break",
-            "continue",
-            "true",
-            "false",
-        ],
-        value: true,
-    },
-    {
-        type: "BRACE",
-        match: ["(", ")", "{", "}", "[", "]"],
-        value: true,
-    },
-    {
         type: "IDENTIFIER",
         match: /[a-zA-Z_][a-zA-Z0-9_]*/,
+        value: true,
+    },
+    {
+        type: "FLOATING_POINT",
+        match: /[-+]?[0-9]*\.?[0-9]+/,
+        value: true,
+    },
+    {
+        type: "INTEGER",
+        match: /^[-+]?\d+$/,
         value: true,
     },
 ];

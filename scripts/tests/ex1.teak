@@ -1,1 +1,9 @@
-int a = 2
+int a = 12;
+
+bool b = false;
+
+string c = "Hello World!";
+
+if (a == b) {
+    print(c);
+}

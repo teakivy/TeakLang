@@ -11,5 +11,8 @@
 	},
 	"scripts": {
 		"test": "yarn tsc && node ./scripts/test.js"
+	},
+	"dependencies": {
+		"fs": "^0.0.1-security"
 	}
 }

@@ -1,14 +1,32 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Lexer = void 0;
-const tokens_1 = require("./tokens");
+const utils_1 = require("../utils");
+const reserved = [
+    "if",
+    "else",
+    "while",
+    "for",
+    "return",
+    "break",
+    "continue",
+    "true",
+    "false",
+];
+const dataTypes = ["int", "float", "string", "bool"];
+const unaryOperatorsDouble = ["++", "--"];
+const unaryOperatorsSingle = ["!"];
+const binaryOperatorsSingle = ["+", "-", "*", "/", "%", ">", "<", "^"];
+const binaryOperatorsDouble = ["==", "!=", ">=", "<=", "&&", "||"];
+const symbols = ["(", ")", "{", "}", "[", "]", ";", "="];
 class Lexer {
     constructor(source) {
-        this.tokens = tokens_1.tokens;
-        this.source = source;
+        // this.tokens = tokens;
+        this.source = source + "\n";
         this.index = 0;
         this.line = 1;
         this.column = 1;
+        this.tokenIndex = -1;
     }
     lex() {
         const tokens = [];
@@ -21,54 +39,194 @@ class Lexer {
         return tokens;
     }
     getNextToken() {
-        const source = this.source.slice(this.index);
-        for (const token of this.tokens) {
-            let match;
-            if (typeof token.match === "string") {
-                if (source.startsWith(token.match)) {
-                    this.index += token.match.length;
-                    this.column += token.match.length;
-                    let rValue = {
-                        type: token.type,
-                    };
-                    if (token.value) {
-                        rValue.value = token.match;
-                    }
-                    return rValue;
+        const char = this.source[this.index];
+        this.tokenIndex++;
+        if ((0, utils_1.isWhitespace)(char)) {
+            this.index++;
+            this.column++;
+            while ((0, utils_1.isWhitespace)(this.source[this.index]) && this.ci()) {
+                this.index++;
+                this.column++;
+            }
+            return {
+                type: "WHITE_SPACE",
+                index: this.tokenIndex,
+            };
+        }
+        if (char === '"') {
+            let value = "";
+            this.index++;
+            this.column++;
+            while (this.source[this.index] !== '"' && this.ci()) {
+                value += this.source[this.index];
+                this.index++;
+                this.column++;
+            }
+            this.index++;
+            this.column++;
+            return {
+                type: "STRING",
+                index: this.tokenIndex,
+                value,
+            };
+        }
+        if (char === "/") {
+            if (this.source[this.index + 1] === "/") {
+                let value = "";
+                this.index += 2;
+                this.column += 2;
+                while (!(0, utils_1.isNewLine)(this.source[this.index]) && this.ci()) {
+                    value += this.source[this.index];
+                    this.index++;
+                    this.column++;
                 }
-            }
-            else if (token.match instanceof RegExp) {
-                match = source.match(token.match);
-            }
-            else if (Array.isArray(token.match)) {
-                for (const matchString of token.match) {
-                    if (source.startsWith(matchString)) {
-                        this.index += matchString.length;
-                        this.column += matchString.length;
-                        let rValue = {
-                            type: token.type,
-                        };
-                        if (token.value) {
-                            rValue.value = matchString;
-                        }
-                        return rValue;
-                    }
-                }
-            }
-            if (match) {
-                const value = token.value ? match[0] : undefined;
-                this.index += match[0].length;
-                this.column += match[0].length;
-                let rValue = {
-                    type: token.type,
+                return {
+                    type: "COMMENT",
+                    index: this.tokenIndex,
+                    value: value.trim(),
                 };
-                if (token.value) {
-                    rValue.value = value;
-                }
-                return rValue;
             }
         }
-        throw new Error(`Unexpected token " ${source.split(" ")[0]} " at line ${this.line} and column ${this.column}`);
+        if ((0, utils_1.isNumeric)(char)) {
+            let value = char;
+            this.index++;
+            this.column++;
+            while ((0, utils_1.isNumeric)(this.source[this.index]) && this.ci()) {
+                value += this.source[this.index];
+                this.index++;
+                this.column++;
+            }
+            return {
+                type: "NUMBER",
+                index: this.tokenIndex,
+                value,
+            };
+        }
+        if ((0, utils_1.isAlpha)(char)) {
+            let value = char;
+            this.index++;
+            this.column++;
+            while ((0, utils_1.isAlphaNumeric)(this.source[this.index]) && this.ci()) {
+                value += this.source[this.index];
+                this.index++;
+                this.column++;
+            }
+            return {
+                type: this.isReserved(value)
+                    ? "KEYWORD"
+                    : this.isDataType(value)
+                        ? "DATA_TYPE"
+                        : "IDENTIFIER",
+                index: this.tokenIndex,
+                value,
+            };
+        }
+        if ((0, utils_1.isOperatorSymbol)(char)) {
+            let value = char;
+            this.index++;
+            this.column++;
+            if (binaryOperatorsDouble.includes(value + this.source[this.index])) {
+                value += this.source[this.index];
+                this.index++;
+                this.column++;
+                return {
+                    type: "BINARY_OPERATOR",
+                    index: this.tokenIndex,
+                    value,
+                };
+            }
+            if (unaryOperatorsDouble.includes(value + this.source[this.index])) {
+                value += this.source[this.index];
+                this.index++;
+                this.column++;
+                return {
+                    type: "UNARY_OPERATOR",
+                    index: this.tokenIndex,
+                    value,
+                };
+            }
+            if (binaryOperatorsSingle.includes(value)) {
+                return {
+                    type: "BINARY_OPERATOR",
+                    index: this.tokenIndex,
+                    value,
+                };
+            }
+            if (char === "!" && !(0, utils_1.isOperatorSymbol)(this.source[this.index])) {
+                return {
+                    type: "UNARY_OPERATOR",
+                    index: this.tokenIndex,
+                    value,
+                };
+            }
+            if (char === "=" && !(0, utils_1.isOperatorSymbol)(this.source[this.index])) {
+                return {
+                    type: "ASSIGNMENT_OPERATOR",
+                    index: this.tokenIndex,
+                    value,
+                };
+            }
+            throw new Error(`Invalid operator symbol: ${value} at line ${this.line} column ${this.column}`);
+        }
+        if (symbols.includes(char)) {
+            let value = "";
+            this.index++;
+            this.column++;
+            let type = "SYMBOL";
+            let giveValue = false;
+            switch (char) {
+                case ";": {
+                    type = "END_OF_STATEMENT";
+                    break;
+                }
+                case "(": {
+                    type = "L_PAREN";
+                    break;
+                }
+                case ")": {
+                    type = "R_PAREN";
+                    break;
+                }
+                case "{": {
+                    type = "L_BRACE";
+                    break;
+                }
+                case "}": {
+                    type = "R_BRACE";
+                    break;
+                }
+                case "[": {
+                    type = "L_BRACKET";
+                    break;
+                }
+                case "]": {
+                    type = "R_BRACKET";
+                    break;
+                }
+                case "=": {
+                    type = "ASSIGNMENT_OPERATOR";
+                    break;
+                }
+            }
+            let returnValue = {
+                type,
+                index: this.tokenIndex,
+            };
+            if (giveValue) {
+                returnValue.value = value;
+            }
+            return returnValue;
+        }
+        throw new Error(`Invalid character: ${char} at line ${this.line} column ${this.column}`);
+    }
+    ci() {
+        return this.index < this.source.length;
+    }
+    isReserved(value) {
+        return reserved.includes(value);
+    }
+    isDataType(value) {
+        return dataTypes.includes(value);
     }
 }
 exports.Lexer = Lexer;

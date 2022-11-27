@@ -1,5 +1,6 @@
 const { Lexer } = require("../dist/lexer/lexer");
 const { exec } = require("child_process");
+const fs = require("fs");
 
 function os_func() {
 	this.execCommand = function (cmd) {
@@ -20,7 +21,7 @@ async function run() {
 		// 	.join(" ")
 		// 	.replace(`${process.argv[0]} ${process.argv[1]} `, "");
 
-		let source = "int a = 2;\nint b = 4;\nint c = a + b;\nprint (c);";
+		let source = fs.readFileSync("./scripts/tests/ex1.teak", "utf8");
 
 		console.log("\n" + source + "\n");
 
