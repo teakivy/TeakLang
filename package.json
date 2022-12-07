@@ -7,12 +7,17 @@
 	"license": "MIT",
 	"private": false,
 	"devDependencies": {
+		"@types/node": "^18.11.11",
 		"typescript": "^4.9.3"
 	},
 	"scripts": {
-		"test": "yarn tsc && node ./scripts/test.js"
+		"test": "yarn tsc && node ./scripts/test.js",
+		"build": "yarn tsc",
+		"runtest": "node ./scripts/test.js"
 	},
 	"dependencies": {
+		"chalk": "^5.1.2",
 		"fs": "^0.0.1-security"
-	}
+	},
+	"type": "module"
 }

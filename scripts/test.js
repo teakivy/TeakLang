@@ -1,6 +1,6 @@
-const { Lexer } = require("../dist/lexer/lexer");
-const { exec } = require("child_process");
-const fs = require("fs");
+import { Lexer } from "../dist/lexer/lexer.js";
+import { exec } from "child_process";
+import fs from "fs";
 
 function os_func() {
 	this.execCommand = function (cmd) {
@@ -13,22 +13,15 @@ function os_func() {
 }
 const os = new os_func();
 
-async function run() {
-	await os.execCommand("yarn tsc").then(async () => {
-		console.log("TypeScript compiled\n");
+async function run(fileName) {
+	let source = fs.readFileSync("./scripts" + fileName, "utf8");
 
-		// let source = process.argv
-		// 	.join(" ")
-		// 	.replace(`${process.argv[0]} ${process.argv[1]} `, "");
+	// console.log("\n" + source + "\n");
 
-		let source = fs.readFileSync("./scripts/tests/ex1.tea", "utf8");
+	const lexer = new Lexer(source, fileName);
 
-		console.log("\n" + source + "\n");
-
-		const lexer = new Lexer(source);
-
-		console.log(lexer.lex());
-	});
+	const lexed = lexer.lex();
+	console.log(lexed);
 }
 
-run();
+run("/tests/ex1.tea");

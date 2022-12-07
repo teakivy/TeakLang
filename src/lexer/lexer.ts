@@ -5,8 +5,9 @@ import {
 	isAlphaNumeric,
 	isNewLine,
 	isOperatorSymbol,
-} from "../utils";
-// import { tokens } from "./tokens";
+} from "../utils/utils.js";
+import chalk from "chalk";
+import { throwError } from "../utils/errorHandler.js";
 
 type TokenIndex = {
 	type: string;
@@ -48,7 +49,7 @@ const unaryOperatorsSingle = ["!"];
 
 const binaryOperatorsSingle = ["+", "-", "*", "/", "%", ">", "<", "^"];
 
-const binaryOperatorsDouble = ["==", "!=", ">=", "<=", "&&", "||"];
+const binaryOperatorsDouble = ["->", "==", "!=", ">=", "<=", "&&", "||"];
 
 const symbols = ["(", ")", "{", "}", "[", "]", ";", "=", ".", ","];
 
@@ -59,14 +60,16 @@ export class Lexer {
 	private line: number;
 	private column: number;
 	private tokenIndex: number;
+	private filename: string;
 
-	constructor(source: string) {
+	constructor(source: string, filename: string) {
 		// this.tokens = tokens;
 		this.source = source + "\n";
 		this.index = 0;
 		this.line = 1;
 		this.column = 1;
 		this.tokenIndex = -1;
+		this.filename = filename;
 	}
 
 	public lex(): TokenIndex[] {
@@ -75,9 +78,18 @@ export class Lexer {
 		while (this.index < this.source.length) {
 			const token = this.getNextToken();
 
-			if (token) {
-				tokens.push(token);
+			if (token === undefined) {
+				return throwError(
+					"Lexer",
+					chalk.red.bold(
+						`Unexpected character '${
+							this.source[this.index]
+						}' at line ${this.line}, column ${this.column}`
+					)
+				);
 			}
+
+			tokens.push(token);
 		}
 
 		return tokens;
@@ -86,6 +98,22 @@ export class Lexer {
 	private getNextToken(): TokenIndex | undefined {
 		const char = this.source[this.index];
 		this.tokenIndex++;
+
+		if (char === "\n") {
+			this.index++;
+			this.line++;
+			this.column = 1;
+
+			while (isWhitespace(this.source[this.index]) && this.ci()) {
+				this.index++;
+				this.column++;
+			}
+
+			return {
+				type: "WHITE_SPACE",
+				index: this.tokenIndex,
+			};
+		}
 
 		if (isWhitespace(char)) {
 			this.index++;
@@ -224,7 +252,10 @@ export class Lexer {
 				};
 			}
 
-			if (char === "!" && !isOperatorSymbol(this.source[this.index])) {
+			if (
+				unaryOperatorsSingle.includes(char) &&
+				!isOperatorSymbol(this.source[this.index])
+			) {
 				return {
 					type: "UNARY_OPERATOR",
 					index: this.tokenIndex,
@@ -308,8 +339,8 @@ export class Lexer {
 			return returnValue;
 		}
 
-		throw new Error(
-			`Invalid character: ${char} at line ${this.line} column ${this.column}`
+		return this.throwLexerError(
+			`Invalid character: " ` + chalk.yellow(char) + ` "`
 		);
 	}
 
@@ -323,5 +354,15 @@ export class Lexer {
 
 	private isDataType(value: string): boolean {
 		return dataTypes.includes(value);
+	}
+
+	private throwLexerError(message: string): never {
+		return throwError(
+			"Lexer",
+			chalk.blue.bold(this.filename) +
+				chalk.redBright.bold("  >  ") +
+				chalk.blueBright.bold(`[${this.line}:${this.column}]`) +
+				chalk.red(`\n    ${message}`)
+		);
 	}
 }

@@ -11,7 +11,7 @@ export function isAlphaNumeric(value: string): boolean {
 }
 
 export function isWhitespace(value: string): boolean {
-	let keys = [" ", "\t", "\r", "\n"];
+	let keys = [" ", "\t", "\r"];
 	return keys.includes(value);
 }
 

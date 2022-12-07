@@ -1,0 +1,24 @@
+# Compiled output
+/dist
+/lib
+/out
+
+# IDEs and editors
+/.idea
+.DS_Store
+.vscode
+
+# Logs
+/logs
+*.log
+
+# Node modules
+/node_modules
+
+# Packages
+/package-lock.json
+/yarn.lock
+
+# Testing
+/coverage
+/.nyc_output
