@@ -9,16 +9,12 @@ import {
 import chalk from "chalk";
 import { throwError } from "../utils/errorHandler.js";
 
-type TokenIndex = {
+export type Token = {
 	type: string;
 	index: number;
 	value?: string;
-};
-
-type TokenDeclaration = {
-	type: string;
-	match: string | RegExp | string[];
-	value?: boolean;
+	line: number;
+	column: number;
 };
 
 const reserved = [
@@ -39,6 +35,7 @@ const reserved = [
 	"public",
 	"const",
 	"func",
+	"const",
 ];
 
 const dataTypes = ["int", "float", "string", "bool"];
@@ -72,8 +69,8 @@ export class Lexer {
 		this.filename = filename;
 	}
 
-	public lex(): TokenIndex[] {
-		const tokens: TokenIndex[] = [];
+	public lex(): Token[] {
+		const tokens: Token[] = [];
 
 		while (this.index < this.source.length) {
 			const token = this.getNextToken();
@@ -95,7 +92,7 @@ export class Lexer {
 		return tokens;
 	}
 
-	private getNextToken(): TokenIndex | undefined {
+	private getNextToken(): Token | undefined {
 		const char = this.source[this.index];
 		this.tokenIndex++;
 
@@ -112,6 +109,8 @@ export class Lexer {
 			return {
 				type: "WHITE_SPACE",
 				index: this.tokenIndex,
+				line: this.line,
+				column: this.column,
 			};
 		}
 
@@ -127,6 +126,8 @@ export class Lexer {
 			return {
 				type: "WHITE_SPACE",
 				index: this.tokenIndex,
+				line: this.line,
+				column: this.column,
 			};
 		}
 
@@ -148,6 +149,8 @@ export class Lexer {
 				type: "STRING",
 				index: this.tokenIndex,
 				value,
+				line: this.line,
+				column: this.column,
 			};
 		}
 
@@ -167,6 +170,8 @@ export class Lexer {
 					type: "COMMENT",
 					index: this.tokenIndex,
 					value: value.trim(),
+					line: this.line,
+					column: this.column,
 				};
 			}
 		}
@@ -186,6 +191,8 @@ export class Lexer {
 				type: "NUMBER",
 				index: this.tokenIndex,
 				value,
+				line: this.line,
+				column: this.column,
 			};
 		}
 
@@ -208,6 +215,8 @@ export class Lexer {
 					: "IDENTIFIER",
 				index: this.tokenIndex,
 				value,
+				line: this.line,
+				column: this.column,
 			};
 		}
 
@@ -227,6 +236,8 @@ export class Lexer {
 					type: "BINARY_OPERATOR",
 					index: this.tokenIndex,
 					value,
+					line: this.line,
+					column: this.column,
 				};
 			}
 
@@ -241,6 +252,8 @@ export class Lexer {
 					type: "UNARY_OPERATOR",
 					index: this.tokenIndex,
 					value,
+					line: this.line,
+					column: this.column,
 				};
 			}
 
@@ -249,6 +262,8 @@ export class Lexer {
 					type: "BINARY_OPERATOR",
 					index: this.tokenIndex,
 					value,
+					line: this.line,
+					column: this.column,
 				};
 			}
 
@@ -260,6 +275,8 @@ export class Lexer {
 					type: "UNARY_OPERATOR",
 					index: this.tokenIndex,
 					value,
+					line: this.line,
+					column: this.column,
 				};
 			}
 
@@ -268,6 +285,8 @@ export class Lexer {
 					type: "ASSIGNMENT_OPERATOR",
 					index: this.tokenIndex,
 					value,
+					line: this.line,
+					column: this.column,
 				};
 			}
 
@@ -327,9 +346,11 @@ export class Lexer {
 				}
 			}
 
-			let returnValue: TokenIndex = {
+			let returnValue: Token = {
 				type,
 				index: this.tokenIndex,
+				line: this.line,
+				column: this.column,
 			};
 
 			if (giveValue) {

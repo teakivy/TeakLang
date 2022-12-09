@@ -19,6 +19,7 @@ const reserved = [
     "public",
     "const",
     "func",
+    "const",
 ];
 const dataTypes = ["int", "float", "string", "bool"];
 const unaryOperatorsDouble = ["++", "--"];
@@ -61,6 +62,8 @@ export class Lexer {
             return {
                 type: "WHITE_SPACE",
                 index: this.tokenIndex,
+                line: this.line,
+                column: this.column,
             };
         }
         if (isWhitespace(char)) {
@@ -73,6 +76,8 @@ export class Lexer {
             return {
                 type: "WHITE_SPACE",
                 index: this.tokenIndex,
+                line: this.line,
+                column: this.column,
             };
         }
         if (char === '"') {
@@ -90,6 +95,8 @@ export class Lexer {
                 type: "STRING",
                 index: this.tokenIndex,
                 value,
+                line: this.line,
+                column: this.column,
             };
         }
         if (char === "/") {
@@ -106,6 +113,8 @@ export class Lexer {
                     type: "COMMENT",
                     index: this.tokenIndex,
                     value: value.trim(),
+                    line: this.line,
+                    column: this.column,
                 };
             }
         }
@@ -122,6 +131,8 @@ export class Lexer {
                 type: "NUMBER",
                 index: this.tokenIndex,
                 value,
+                line: this.line,
+                column: this.column,
             };
         }
         if (isAlpha(char)) {
@@ -141,6 +152,8 @@ export class Lexer {
                         : "IDENTIFIER",
                 index: this.tokenIndex,
                 value,
+                line: this.line,
+                column: this.column,
             };
         }
         if (isOperatorSymbol(char)) {
@@ -155,6 +168,8 @@ export class Lexer {
                     type: "BINARY_OPERATOR",
                     index: this.tokenIndex,
                     value,
+                    line: this.line,
+                    column: this.column,
                 };
             }
             if (unaryOperatorsDouble.includes(value + this.source[this.index])) {
@@ -165,6 +180,8 @@ export class Lexer {
                     type: "UNARY_OPERATOR",
                     index: this.tokenIndex,
                     value,
+                    line: this.line,
+                    column: this.column,
                 };
             }
             if (binaryOperatorsSingle.includes(value)) {
@@ -172,6 +189,8 @@ export class Lexer {
                     type: "BINARY_OPERATOR",
                     index: this.tokenIndex,
                     value,
+                    line: this.line,
+                    column: this.column,
                 };
             }
             if (unaryOperatorsSingle.includes(char) &&
@@ -180,6 +199,8 @@ export class Lexer {
                     type: "UNARY_OPERATOR",
                     index: this.tokenIndex,
                     value,
+                    line: this.line,
+                    column: this.column,
                 };
             }
             if (char === "=" && !isOperatorSymbol(this.source[this.index])) {
@@ -187,6 +208,8 @@ export class Lexer {
                     type: "ASSIGNMENT_OPERATOR",
                     index: this.tokenIndex,
                     value,
+                    line: this.line,
+                    column: this.column,
                 };
             }
             throw new Error(`Invalid operator symbol: ${value} at line ${this.line} column ${this.column}`);
@@ -242,6 +265,8 @@ export class Lexer {
             let returnValue = {
                 type,
                 index: this.tokenIndex,
+                line: this.line,
+                column: this.column,
             };
             if (giveValue) {
                 returnValue.value = value;

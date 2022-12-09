@@ -1,4 +1,5 @@
 import { Lexer } from "../dist/lexer/lexer.js";
+import { Parser } from "../dist/parser/parser.js";
 import { exec } from "child_process";
 import fs from "fs";
 
@@ -21,7 +22,10 @@ async function run(fileName) {
 	const lexer = new Lexer(source, fileName);
 
 	const lexed = lexer.lex();
-	console.log(lexed);
+
+	const parser = new Parser(lexed, fileName);
+
+	parser.parse();
 }
 
-run("/tests/ex1.tea");
+run("/tests/ex0.tea");
