@@ -76,13 +76,10 @@ export class Parser extends AbstractParser {
 			}
 
 			if (token.value === "private") {
-				console.log("private", this.peek());
 				if (this.peek()?.type === "KEYWORD") {
-					console.log("keyword");
 					const nextToken = this.getNextToken();
 
 					if (nextToken?.value === "const") {
-						console.log("const");
 						this.parseConst("private");
 						continue;
 					}
