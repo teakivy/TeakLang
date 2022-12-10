@@ -8,14 +8,7 @@ import {
 } from "../utils/utils.js";
 import chalk from "chalk";
 import { throwError } from "../utils/errorHandler.js";
-
-export type Token = {
-	type: string;
-	index: number;
-	value?: string;
-	line: number;
-	column: number;
-};
+import { Token } from "../types/types.js";
 
 const reserved = [
 	"if",

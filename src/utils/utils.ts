@@ -7,7 +7,7 @@ export function isAlpha(value: string): boolean {
 }
 
 export function isAlphaNumeric(value: string): boolean {
-	return /^[a-zA-Z0-9]+$/.test(value);
+	return /^[a-zA-Z0-9_]+$/.test(value);
 }
 
 export function isWhitespace(value: string): boolean {
@@ -23,4 +23,8 @@ export function isNewLine(value: string): boolean {
 export function isOperatorSymbol(value: string): boolean {
 	let keys = ["+", "-", "*", "/", "%", ">", "<", "^", "=", "!", "&", "|"];
 	return keys.includes(value);
+}
+
+export function isAllCaps(value: string): boolean {
+	return value === value.toUpperCase();
 }
